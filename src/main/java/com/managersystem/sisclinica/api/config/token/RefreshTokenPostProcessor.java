@@ -18,9 +18,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 @ControllerAdvice
 public class RefreshTokenPostProcessor implements ResponseBodyAdvice<OAuth2AccessToken> {
-
-//	@Autowired
-//	private SisclinicaApiProperty sisclinicaApiProperty;
 	
 	@Override
 	public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
@@ -52,10 +49,7 @@ public class RefreshTokenPostProcessor implements ResponseBodyAdvice<OAuth2Acces
 		Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
 		refreshTokenCookie.setHttpOnly(true);	// é apenas um cookies de http
 		
-//		System.out.println(">>>>>> algamoneyApiProperty.getSeguranca().isEnableHttps(): " + algamoneyApiProperty.getSeguranca().isEnableHttps());
-		
 		refreshTokenCookie.setSecure(false);
-//		refreshTokenCookie.setSecure(sisclinicaApiProperty.getSeguranca().isEnableHttps());	// produção = true
 		refreshTokenCookie.setPath(req.getContextPath() + "/oauth/token");
 		refreshTokenCookie.setMaxAge(2592000);	// equivale a 30 dias
 		resp.addCookie(refreshTokenCookie);	// adicionar o cookie na resposta

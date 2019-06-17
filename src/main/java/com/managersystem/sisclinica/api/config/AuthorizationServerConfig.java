@@ -5,7 +5,6 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -19,7 +18,6 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 import com.managersystem.sisclinica.api.config.token.CustomTokenEnhancer;
 
-@Profile("oauth-security")
 @Configuration
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
@@ -37,7 +35,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 			.secret("$2a$10$XYk5lgVqHVRizkt1GUfMEuTQ/gssIi0WltF73glr4KU0Bz8W.LjzS")		// sisclinica
 			.scopes("read", "write")
 			.authorizedGrantTypes("password","refresh_token")
-			.accessTokenValiditySeconds(300)
+			.accessTokenValiditySeconds(3000)
 			.refreshTokenValiditySeconds(86400);
 
 	}

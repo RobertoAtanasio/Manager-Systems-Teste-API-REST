@@ -46,13 +46,17 @@ public class PaisResource {
 	private MessageSource messageSource;
 
 	@GetMapping("/listar")
-	public List<Pais> listar() { 
-		return paisRepository.findAll();
-	}
-
-	@GetMapping("/pesquisar")
 	public Page<Pais> pesquisar(PaisFiltro paisFiltro, Pageable pageable) {
 		return paisRepository.filtrar(paisFiltro, pageable);
+	}
+
+	@GetMapping("/pesquisar/{id}")
+	public ResponseEntity<Optional<Pais>> buscarPorId(@PathVariable Long id) {
+		Optional<Pais> pais = paisRepository.findById(id);
+		if (!pais.isPresent()) {
+			throw new PaisInexistenteException();
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(pais);
 	}
 	
 	@PostMapping("/salvar")
@@ -61,14 +65,6 @@ public class PaisResource {
 		return ResponseEntity.status(HttpStatus.CREATED).body(paisSalvo);
 	}
 	
-	@GetMapping("/pesquisar/{id}")
-	public ResponseEntity<Optional<Pais>> pesquisarPorId(@PathVariable Long id) {
-		Optional<Pais> pais = paisRepository.findById(id);
-		if (!pais.isPresent()) {
-			throw new PaisInexistenteException();
-		}
-		return ResponseEntity.status(HttpStatus.OK).body(pais);
-	}
 	
 	@PutMapping("/atualizar/{id}")
 //	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_PESSOA') and #oauth2.hasScope('write')")
@@ -80,10 +76,10 @@ public class PaisResource {
 	@DeleteMapping("/excluir/{id}")
 	public ResponseEntity<Object> remover(@PathVariable Long id) {
 		Optional<Pais> pais = paisRepository.findById(id);
-		if (pais.isPresent()) {
-			paisRepository.deleteById(id);
-			return ResponseEntity.ok(new Mensagem("Registro Excluído com Sucesso!"));
+		if (!pais.isPresent()) {
+			throw new PaisInexistenteException();
 		}
+		paisRepository.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 

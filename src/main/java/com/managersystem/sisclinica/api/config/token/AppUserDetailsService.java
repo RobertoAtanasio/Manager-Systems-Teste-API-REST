@@ -28,7 +28,7 @@ public class AppUserDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
 		Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(login);
-		
+		System.out.println(">>>>>>>>>>>>> Login: " + login);
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		String senhaCrypt = null;
 		if (usuarioOptional.isPresent()) {
@@ -43,8 +43,6 @@ public class AppUserDetailsService implements UserDetailsService {
 		Set<SimpleGrantedAuthority> authorities = new HashSet<>();
 		
 		List<PermissoesUsuario> lista = usuarioRepository.listarPermissoesUsuario(usuario.getId());
-		
-//		lista.forEach(p -> System.out.println(">>> Permissão " + p.getDescricao()));
 		
 		lista.forEach(p -> authorities.add(
 				new SimpleGrantedAuthority(p.getDescricao().toUpperCase())
