@@ -44,33 +44,48 @@ public class UsuarioService {
 
 	public UsuarioAutenticado autenticar(UsuarioPesquisa usuario) {
 		
-		UsuarioAutenticado usuarioRetorno = new UsuarioAutenticado();
-		usuarioRetorno.setLogin(usuario.getLogin());
+		UsuarioAutenticado usuarioAutenticado = new UsuarioAutenticado();
+		usuarioAutenticado.setLogin(usuario.getLogin());
 
 		Optional<Usuario> usuarioExistente = usuarioRepository.findByLogin(usuario.getLogin());
 		if (!usuarioExistente.isPresent()) {
-			usuarioRetorno.setNome("");
-			usuarioRetorno.setToken("");
-			usuarioRetorno.setAutenticado(false);
-			usuarioRetorno.setAdministrador(false);
-		} else {			
-			LocalDateTime localDateTime = LocalDateTime.now();
-			localDateTime = localDateTime.plusMinutes(5);
-			
-			usuarioRetorno.setNome(usuarioExistente.get().getNome());
-			usuarioRetorno.setToken(GerarToken.gerarToken());
-			usuarioRetorno.setAutenticado(true);
-			usuarioRetorno.setAdministrador(usuarioExistente.get().getAdministrador());
-			
-			Token token = new Token();
-			token.setToken(usuarioRetorno.getToken());
-			token.setLogin(usuario.getLogin());
-			token.setExpiracao(localDateTime);
-			token.setAdministrador(usuarioRetorno.getAdministrador());
-			tokenService.salvar(token);
+			throw new UsuarioInexistenteException();
 		}
 		
-		return usuarioRetorno;
+		usuarioExistente = usuarioRepository.findByLoginAndSenha(usuario.getLogin(), usuario.getSenha());
+		if (!usuarioExistente.isPresent()) {
+			throw new UsuarioSenhaInvalidaException();
+		}
+		
+		LocalDateTime localDateTime = LocalDateTime.now();
+		localDateTime = localDateTime.plusMinutes(5);
+
+		Optional<Token> token = tokenRepository.findByLogin(usuario.getLogin());
+		if (token.isPresent()) {			
+			usuarioAutenticado.setNome(usuarioExistente.get().getNome());
+			usuarioAutenticado.setToken(GerarToken.gerarToken());
+			usuarioAutenticado.setAutenticado(true);
+			usuarioAutenticado.setAdministrador(usuarioExistente.get().getAdministrador());
+			
+			token.get().setToken(usuarioAutenticado.getToken());
+			token.get().setExpiracao(localDateTime);
+			token.get().setAdministrador(usuarioAutenticado.getAdministrador());
+			tokenService.salvar(token.get());
+		} else {
+
+			usuarioAutenticado.setNome(usuarioExistente.get().getNome());
+			usuarioAutenticado.setToken(GerarToken.gerarToken());
+			usuarioAutenticado.setAutenticado(true);
+			usuarioAutenticado.setAdministrador(usuarioExistente.get().getAdministrador());
+			
+			Token tokenNovo = new Token();
+			tokenNovo.setToken(usuarioAutenticado.getToken());
+			tokenNovo.setLogin(usuario.getLogin());
+			tokenNovo.setExpiracao(localDateTime);
+			tokenNovo.setAdministrador(usuarioAutenticado.getAdministrador());
+			tokenService.salvar(tokenNovo);		
+		}
+		return usuarioAutenticado;
 	}
 
 	public Boolean renovarTicket(String tokenCodigo) {
@@ -78,7 +93,7 @@ public class UsuarioService {
 		if (!token.isPresent()) {
 			return false;
 		}
-		LocalDateTime localDateTime = token.get().getExpiracao();
+		LocalDateTime localDateTime = LocalDateTime.now();
 		localDateTime = localDateTime.plusMinutes(5);
 		token.get().setExpiracao(localDateTime);
 		tokenService.salvar(token.get());
