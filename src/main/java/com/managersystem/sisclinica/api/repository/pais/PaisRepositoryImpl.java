@@ -72,7 +72,7 @@ public class PaisRepositoryImpl implements PaisRepositoryQuery {
 		return quantidade;
 	}
 	
-	private Predicate[] criarRestricoes(PaisFiltro paisFiltro, CriteriaBuilder builder, Root<Pais> root) {
+	private Predicate[] criarRestricoes(com.managersystem.sisclinica.api.repository.filtro.PaisFiltro paisFiltro, CriteriaBuilder builder, Root<Pais> root) {
 		List<Predicate> listaPredicate = new ArrayList<>();
 		
 		if (!StringUtils.isEmpty(paisFiltro.getNome())) {

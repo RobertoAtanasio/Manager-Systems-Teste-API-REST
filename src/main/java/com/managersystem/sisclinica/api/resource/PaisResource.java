@@ -10,8 +10,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,7 +26,6 @@ import com.managersystem.sisclinica.api.exception.PaisInexistenteException;
 import com.managersystem.sisclinica.api.exception.PaisJaExistenteException;
 import com.managersystem.sisclinica.api.exception.SisclinicaExceptionHandler.Mensagem;
 import com.managersystem.sisclinica.api.model.Pais;
-import com.managersystem.sisclinica.api.repository.filtro.PaisFiltro;
 import com.managersystem.sisclinica.api.repository.pais.PaisRepository;
 import com.managersystem.sisclinica.api.service.PaisService;
 
@@ -45,12 +42,17 @@ public class PaisResource {
 	@Autowired
 	private MessageSource messageSource;
 
+	@GetMapping("/pesquisar/{nome}")
+	public List<Pais> pesquisar(@PathVariable String nome) {
+		return paisRepository.findByNomeContaining(nome);
+	}
+	
 	@GetMapping("/listar")
-	public Page<Pais> pesquisar(PaisFiltro paisFiltro, Pageable pageable) {
-		return paisRepository.filtrar(paisFiltro, pageable);
+	public List<Pais> listar() { 
+		return paisRepository.findAll();
 	}
 
-	@GetMapping("/pesquisar/{id}")
+	@GetMapping("/pesquisarPorId/{id}")
 	public ResponseEntity<Optional<Pais>> buscarPorId(@PathVariable Long id) {
 		Optional<Pais> pais = paisRepository.findById(id);
 		if (!pais.isPresent()) {
