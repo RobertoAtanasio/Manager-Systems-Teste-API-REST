@@ -1,17 +1,8 @@
 package com.managersystem.sisclinica.api.repository.filtro;
 
-public class PaisFiltro {
+public class TokenFiltro {
 
-	private String nome;
 	private String token;
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
 
 	public String getToken() {
 		return token;

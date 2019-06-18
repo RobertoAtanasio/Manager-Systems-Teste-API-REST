@@ -71,12 +71,11 @@
 			<optional>true</optional>
 		</dependency>
 		
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 		
-		<!-- https://mvnrepository.com/artifact/org.springframework.security.oauth/spring-security-oauth2 -->
 		<dependency>
 			<groupId>org.springframework.security.oauth</groupId>
 			<artifactId>spring-security-oauth2</artifactId>
@@ -87,7 +86,7 @@
     		<groupId>org.springframework.security</groupId>
     		<artifactId>spring-security-jwt</artifactId>
     		<version>${spring-security-jwt.version}</version>
-		</dependency>
+		</dependency> -->
         
         <dependency>
 		    <groupId>io.springfox</groupId>

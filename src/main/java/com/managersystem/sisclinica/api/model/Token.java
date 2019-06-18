@@ -1,6 +1,6 @@
 package com.managersystem.sisclinica.api.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,11 +29,11 @@ public class Token {
 	
 	@NotNull
 	@Column(name = "expiracao")
-	private LocalDate expiracao;
+	private LocalDateTime expiracao;
 	
 	@NotNull
-	@Column(name = "dministrador")
-	private Boolean dministrador;
+	@Column(name = "administrador")
+	private Boolean administrador;
 	
 	public Long getId() {
 		return id;
@@ -59,22 +59,22 @@ public class Token {
 		this.login = login;
 	}
 	
-	public LocalDate getExpiracao() {
+	public LocalDateTime getExpiracao() {
 		return expiracao;
 	}
-	
-	public void setExpiracao(LocalDate expiracao) {
+
+	public void setExpiracao(LocalDateTime expiracao) {
 		this.expiracao = expiracao;
 	}
 	
-	public Boolean getDministrador() {
-		return dministrador;
+	public Boolean getAdministrador() {
+		return administrador;
 	}
-	
-	public void setDministrador(Boolean dministrador) {
-		this.dministrador = dministrador;
+
+	public void setAdministrador(Boolean administrador) {
+		this.administrador = administrador;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

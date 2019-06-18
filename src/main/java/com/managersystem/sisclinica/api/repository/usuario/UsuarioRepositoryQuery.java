@@ -1,11 +1,9 @@
 package com.managersystem.sisclinica.api.repository.usuario;
 
-import java.util.List;
-
-import com.managersystem.sisclinica.api.model.PermissoesUsuario;
+import com.managersystem.sisclinica.api.model.Usuario;
 
 public interface UsuarioRepositoryQuery {
 	
-	List<PermissoesUsuario> listarPermissoesUsuario(Long id);
+	public Usuario acessarUsuario(String login, String senha);
 
 }

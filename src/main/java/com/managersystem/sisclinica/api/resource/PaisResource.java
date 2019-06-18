@@ -12,12 +12,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.managersystem.sisclinica.api.exception.PaisInexistenteException;
 import com.managersystem.sisclinica.api.exception.PaisJaExistenteException;
 import com.managersystem.sisclinica.api.exception.SisclinicaExceptionHandler.Mensagem;
+import com.managersystem.sisclinica.api.exception.TokenExpiradoException;
+import com.managersystem.sisclinica.api.exception.TokenInexistenteException;
+import com.managersystem.sisclinica.api.exception.TokenNaoAdministradorException;
 import com.managersystem.sisclinica.api.model.Pais;
+import com.managersystem.sisclinica.api.repository.filtro.PaisFiltro;
+import com.managersystem.sisclinica.api.repository.filtro.PaisFiltroExcluir;
+import com.managersystem.sisclinica.api.repository.filtro.TokenFiltro;
 import com.managersystem.sisclinica.api.repository.pais.PaisRepository;
 import com.managersystem.sisclinica.api.service.PaisService;
 
@@ -42,46 +45,65 @@ public class PaisResource {
 	@Autowired
 	private MessageSource messageSource;
 
-	@GetMapping("/pesquisar/{nome}")
-	public List<Pais> pesquisar(@PathVariable String nome) {
-		return paisRepository.findByNomeContaining(nome);
+	@GetMapping("/pesquisar")
+	public List<Pais> pesquisar(PaisFiltro filtro) {
+		List<Pais> lista = null;
+		try {
+			lista = paisRepository.findByNomeContaining(filtro.getNome());			
+		} catch (TokenInexistenteException e) {
+			
+		}
+		return lista;
 	}
 	
 	@GetMapping("/listar")
-	public List<Pais> listar() { 
-		return paisRepository.findAll();
-	}
-
-	@GetMapping("/pesquisarPorId/{id}")
-	public ResponseEntity<Optional<Pais>> buscarPorId(@PathVariable Long id) {
-		Optional<Pais> pais = paisRepository.findById(id);
-		if (!pais.isPresent()) {
-			throw new PaisInexistenteException();
+	public ResponseEntity<List<Pais>> listar(TokenFiltro filtro) { 
+		List<Pais> lista = null;
+		try {
+			lista = paisService.listar(filtro);
+		} catch (TokenInexistenteException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		} catch (TokenExpiradoException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(pais);
+		return ResponseEntity.status(HttpStatus.OK).body(lista);
 	}
 	
 	@PostMapping("/salvar")
-	public ResponseEntity<Pais> salvar(@Valid @RequestBody Pais pais, HttpServletResponse response) {
-		Pais paisSalvo = paisService.salvar(pais);
-		return ResponseEntity.status(HttpStatus.CREATED).body(paisSalvo);
+	public ResponseEntity<Pais> salvar(TokenFiltro filtro, @Valid @RequestBody Pais pais, HttpServletResponse response) {
+		Pais paisSalvo = null;
+		if (pais.getId() > 0) {
+			try {				
+				paisSalvo = paisService.atualizar(filtro.getToken(), pais);
+			} catch (TokenInexistenteException e) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+			} catch (TokenExpiradoException e) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+			} catch (TokenNaoAdministradorException e) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+			}
+			return ResponseEntity.status(HttpStatus.OK).body(paisSalvo);
+		} else {
+			try {				
+				paisSalvo = paisService.salvar(pais);
+			} catch (TokenInexistenteException e) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+			} catch (TokenExpiradoException e) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+			} catch (TokenNaoAdministradorException e) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+			}
+			return ResponseEntity.status(HttpStatus.CREATED).body(paisSalvo);
+		}		
 	}
-	
-	
-	@PutMapping("/atualizar/{id}")
-//	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_PESSOA') and #oauth2.hasScope('write')")
-	public ResponseEntity<Pais> atualizar(@PathVariable Long id, @Valid @RequestBody Pais pais) {
-		Pais paisSalvo = paisService.atualizar(id, pais);	
-		return ResponseEntity.status(HttpStatus.OK).body(paisSalvo);
-	}
-	
-	@DeleteMapping("/excluir/{id}")
-	public ResponseEntity<Object> remover(@PathVariable Long id) {
-		Optional<Pais> pais = paisRepository.findById(id);
+		
+	@GetMapping("/excluir")
+	public ResponseEntity<Object> remover(PaisFiltroExcluir filtro) {
+		Optional<Pais> pais = paisRepository.findById(filtro.getId());
 		if (!pais.isPresent()) {
 			throw new PaisInexistenteException();
 		}
-		paisRepository.deleteById(id);
+		paisRepository.deleteById(filtro.getId());
 		return ResponseEntity.noContent().build();
 	}
 
@@ -98,4 +120,7 @@ public class PaisResource {
 		List<Mensagem> erros = Arrays.asList(new Mensagem(mensagem));
 		return ResponseEntity.badRequest().body(erros);
 	}
+	
+	//TokenInexistenteException
+	
 }

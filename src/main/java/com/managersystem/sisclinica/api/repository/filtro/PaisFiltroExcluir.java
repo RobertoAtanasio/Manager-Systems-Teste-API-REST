@@ -1,16 +1,16 @@
 package com.managersystem.sisclinica.api.repository.filtro;
 
-public class PaisFiltro {
+public class PaisFiltroExcluir {
 
-	private String nome;
+	private Long Id;
 	private String token;
 
-	public String getNome() {
-		return nome;
+	public Long getId() {
+		return Id;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setId(Long id) {
+		Id = id;
 	}
 
 	public String getToken() {

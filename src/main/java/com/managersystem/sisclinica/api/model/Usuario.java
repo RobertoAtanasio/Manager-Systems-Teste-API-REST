@@ -1,18 +1,11 @@
 package com.managersystem.sisclinica.api.model;
 
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -39,15 +32,7 @@ public class Usuario {
 	@NotNull
 	@Column(name = "administrador")
 	private Boolean administrador;
-
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "usuario_permissao", joinColumns = @JoinColumn(name = "id_usuario")
-		, inverseJoinColumns = @JoinColumn(name = "id_permissao"))
-	private List<Permissao> permissoes;
 	
-	@Transient
-	private String usuarioAdministrador;
-		
 	public Long getId() {
 		return id;
 	}
@@ -86,18 +71,6 @@ public class Usuario {
 
 	public void setAdministrador(Boolean administrador) {
 		this.administrador = administrador;
-	}
-
-	public List<Permissao> getPermissoes() {
-		return permissoes;
-	}
-
-	public void setPermissoes(List<Permissao> permissoes) {
-		this.permissoes = permissoes;
-	}
-	
-	public String getUsuarioAdministrador() {
-		return administrador ? "SIM" : "NÃO";
 	}
 
 	@Override
