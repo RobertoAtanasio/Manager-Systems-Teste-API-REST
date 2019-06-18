@@ -1,8 +1,3 @@
-DROP TABLE pais;
-DROP TABLE usuario;
-DROP TABLE token;
-DROP TABLE usuario_permissao;
-DROP TABLE permissao;
 
 CREATE TABLE pais (
 	id INT NOT NULL AUTO_INCREMENT,
@@ -40,7 +35,6 @@ CREATE TABLE usuario_permissao (
 	id_usuario INT NOT NULL,
 	id_permissao INT NOT NULL,
 	PRIMARY KEY (id_usuario, id_permissao),
-	KEY codigo_permissao (id_permissao),
 	CONSTRAINT usuario_permissao_ibfk_1 FOREIGN KEY (id_usuario) REFERENCES usuario (id),
 	CONSTRAINT usuario_permissao_ibfk_2 FOREIGN KEY (id_permissao) REFERENCES permissao (id)
 ); 
@@ -59,21 +53,17 @@ INSERT INTO permissao (id, descricao) VALUES (4, 'ROLE_CONSULTAR_USUARIO');
 INSERT INTO permissao (id, descricao) VALUES (5, 'ROLE_SALVAR_USUARIO');
 INSERT INTO permissao (id, descricao) VALUES (6, 'ROLE_EXCLUIR_USUARIO');
 
-INSERT usuario_permissao (id_usuario, id_permissao)
-	VALUES ((SELECT id FROM usuario WHERE login = 'ADMIN'), 1);
-INSERT usuario_permissao (id_usuario, id_permissao)
-	VALUES ((SELECT id FROM usuario WHERE login = 'ADMIN'), 2);
-INSERT usuario_permissao (id_usuario, id_permissao)
-	VALUES ((SELECT id FROM usuario WHERE login = 'ADMIN'), 3);
+INSERT INTO usuario_permissao (id_usuario, id_permissao)
+	VALUES ((SELECT id FROM usuario WHERE login = 'admin'), 1);
+INSERT INTO usuario_permissao (id_usuario, id_permissao)
+	VALUES ((SELECT id FROM usuario WHERE login = 'admin'), 2);
+INSERT INTO usuario_permissao (id_usuario, id_permissao)
+	VALUES ((SELECT id FROM usuario WHERE login = 'admin'), 3);
 
-INSERT usuario_permissao (id_usuario, id_permissao)
-	VALUES ((SELECT id FROM usuario WHERE login = 'ADMIN'), 4);
-INSERT usuario_permissao (id_usuario, id_permissao)
-	VALUES ((SELECT id FROM usuario WHERE login = 'ADMIN'), 5);
-INSERT usuario_permissao (id_usuario, id_permissao)
-	VALUES ((SELECT id FROM usuario WHERE login = 'ADMIN'), 6);
+INSERT INTO usuario_permissao (id_usuario, id_permissao)
+	VALUES ((SELECT id FROM usuario WHERE login = 'admin'), 4);
+INSERT INTO usuario_permissao (id_usuario, id_permissao)
+	VALUES ((SELECT id FROM usuario WHERE login = 'admin'), 5);
+INSERT INTO usuario_permissao (id_usuario, id_permissao)
+	VALUES ((SELECT id FROM usuario WHERE login = 'admin'), 6);
 
-select p.descricao as descricao from usuario u
-inner join usuario_permissao up on up.id_usuario = u.id
-inner join permissao p on p.id = up.id_permissao 
-where u.id = 1 ;
