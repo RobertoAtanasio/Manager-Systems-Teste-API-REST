@@ -59,13 +59,15 @@ public class PaisResource {
 	public ResponseEntity<Pais> salvar(TokenFiltro tokenFiltro, @Valid @RequestBody Pais pais, HttpServletResponse response) {
 		Pais paisSalvo = null;
 		if (pais.getId() > 0) {
-			try {				
+			try {
 				paisSalvo = paisService.atualizar(tokenFiltro.getToken(), pais);
 			} catch (TokenInexistenteException e) {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 			} catch (TokenExpiradoException e) {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 			} catch (TokenNaoAdministradorException e) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+			} catch (PaisInexistenteException e) {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 			}
 			return ResponseEntity.status(HttpStatus.OK).body(paisSalvo);

@@ -40,7 +40,12 @@ public class PaisService implements validarPais {
 	public Pais atualizar(String tokenCodigo, Pais pais) {
 		Token token = validarToken(tokenCodigo);
 		Optional<Pais> paisSalvo = paisRepository.findById(pais.getId());
-		validarPais(token, paisSalvo);
+		if (!paisSalvo.isPresent()) {
+			throw new PaisInexistenteException();
+		}
+		if (!token.getAdministrador()) {
+			throw new TokenNaoAdministradorException();
+		}
 		return paisRepository.saveAndFlush(pais);
 	}
 
