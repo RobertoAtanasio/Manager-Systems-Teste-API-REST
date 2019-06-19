@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.managersystem.sisclinica.api.exception.UsuarioInexistenteException;
 import com.managersystem.sisclinica.api.model.UsuarioAutenticado;
 import com.managersystem.sisclinica.api.model.UsuarioPesquisa;
 import com.managersystem.sisclinica.api.repository.filtro.TokenFiltro;
@@ -24,9 +25,11 @@ public class UsuarioResource {
 	
 	@PostMapping("/autenticar")
 	public ResponseEntity<UsuarioAutenticado> autenticar(UsuarioPesquisa usuario) {
-		UsuarioAutenticado usuarioAutenticado = usuarioService.autenticar(usuario);
-		if (!usuarioAutenticado.getAutenticado()) {	
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(usuarioAutenticado);
+		UsuarioAutenticado usuarioAutenticado = null;
+		try {
+			usuarioAutenticado = usuarioService.autenticar(usuario);			
+		} catch (UsuarioInexistenteException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(usuarioAutenticado);
 	}

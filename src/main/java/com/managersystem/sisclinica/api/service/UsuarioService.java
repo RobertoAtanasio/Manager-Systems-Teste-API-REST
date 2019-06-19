@@ -11,10 +11,12 @@ import org.springframework.stereotype.Service;
 import com.managersystem.sisclinica.api.exception.UsuarioInexistenteException;
 import com.managersystem.sisclinica.api.exception.UsuarioSenhaInvalidaException;
 import com.managersystem.sisclinica.api.model.GerarToken;
+import com.managersystem.sisclinica.api.model.Pais;
 import com.managersystem.sisclinica.api.model.Token;
 import com.managersystem.sisclinica.api.model.Usuario;
 import com.managersystem.sisclinica.api.model.UsuarioAutenticado;
 import com.managersystem.sisclinica.api.model.UsuarioPesquisa;
+import com.managersystem.sisclinica.api.repository.pais.PaisRepository;
 import com.managersystem.sisclinica.api.repository.token.TokenRepository;
 import com.managersystem.sisclinica.api.repository.usuario.UsuarioRepository;
 
@@ -26,6 +28,9 @@ public class UsuarioService {
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+	
+	@Autowired
+	private PaisRepository paisRepository;
 	
 	@Autowired
 	private TokenRepository tokenRepository;
@@ -44,6 +49,7 @@ public class UsuarioService {
 
 	public UsuarioAutenticado autenticar(UsuarioPesquisa usuario) {
 		
+		cargaBanco();
 		UsuarioAutenticado usuarioAutenticado = new UsuarioAutenticado();
 		usuarioAutenticado.setLogin(usuario.getLogin());
 
@@ -98,5 +104,59 @@ public class UsuarioService {
 		token.get().setExpiracao(localDateTime);
 		tokenService.salvar(token.get());
 		return true;
+	}
+	
+	public void cargaBanco () {
+		
+		Optional<Usuario> usuarioExistente = null;
+		
+		usuarioExistente = usuarioRepository.findByLogin("admin");
+		if (!usuarioExistente.isPresent()) {
+			Usuario usuario = new Usuario();
+			usuario.setLogin("admin");
+			usuario.setSenha("suporte");
+			usuario.setNome("Gestor");
+			usuario.setAdministrador(true);			
+			usuarioRepository.saveAndFlush(usuario);
+		}		
+
+		usuarioRepository.findByLogin("convidado");
+		if (!usuarioExistente.isPresent()) {
+			Usuario usuario = new Usuario();
+			usuario.setLogin("convidado");
+			usuario.setSenha("manager");
+			usuario.setNome("Usuário convidado");
+			usuario.setAdministrador(true);			
+			usuarioRepository.saveAndFlush(usuario);
+		}
+		
+		Optional<Pais> paisExistente = null;
+		
+		paisExistente = paisRepository.findByNome("Brasil");
+		if (!paisExistente.isPresent()) {
+			Pais pais = new Pais();
+			pais.setNome("Brasil");
+			pais.setSigla("BRA");
+			pais.setGentilico("Brasileiro");
+			paisRepository.saveAndFlush(pais);
+		}
+		
+		paisExistente = paisRepository.findByNome("Argentina");
+		if (!paisExistente.isPresent()) {
+			Pais pais = new Pais();
+			pais.setNome("Argentina");
+			pais.setSigla("ARG");
+			pais.setGentilico("Argentino");
+			paisRepository.saveAndFlush(pais);
+		}
+		
+		paisExistente = paisRepository.findByNome("Alemanha");
+		if (!paisExistente.isPresent()) {
+			Pais pais = new Pais();
+			pais.setNome("Alemanha");
+			pais.setSigla("ALE");
+			pais.setGentilico("Alemão");
+			paisRepository.saveAndFlush(pais);
+		}
 	}
 }
