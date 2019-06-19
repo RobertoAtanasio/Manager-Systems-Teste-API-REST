@@ -32,7 +32,12 @@ public class PaisService implements validarPais {
 	public Pais salvar(String tokenCodigo, Pais pais) {
 		Token token = validarToken(tokenCodigo);
 		Optional<Pais> paisExistente = paisRepository.findByNome(pais.getNome());
-		validarPais(token, paisExistente);
+		if (paisExistente.isPresent()) {
+			throw new PaisJaExistenteException();
+		}
+		if (!token.getAdministrador()) {
+			throw new TokenNaoAdministradorException();
+		}
 		return paisRepository.saveAndFlush(pais);
 	}
 	
@@ -86,15 +91,6 @@ public class PaisService implements validarPais {
 			throw new TokenExpiradoException();
 		}
 		return token.get();
-	}
-	
-	private void validarPais(Token token, Optional<Pais> paisExistente) {
-		if (paisExistente.isPresent()) {
-			throw new PaisJaExistenteException();
-		}
-		if (!token.getAdministrador()) {
-			throw new TokenNaoAdministradorException();
-		}
 	}
 
 }
