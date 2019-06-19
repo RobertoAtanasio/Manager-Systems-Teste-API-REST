@@ -32,10 +32,10 @@ public class PaisResource {
 	private validarPais paisService;
 	
 	@GetMapping("/pesquisar")
-	public ResponseEntity<List<Pais>> pesquisar(TokenFiltro tokenCodigo, PaisFiltro paisFiltro) {
+	public ResponseEntity<List<Pais>> pesquisar(PaisFiltro paisFiltro) {
 		List<Pais> lista = null;
 		try {
-			lista = paisService.pesquisar(tokenCodigo.getToken(), paisFiltro);		
+			lista = paisService.pesquisar(paisFiltro.getToken(), paisFiltro);		
 		} catch (TokenInexistenteException e) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
