@@ -126,7 +126,7 @@ public class UsuarioService {
 			usuario.setLogin("convidado");
 			usuario.setSenha("manager");
 			usuario.setNome("Usuário convidado");
-			usuario.setAdministrador(true);			
+			usuario.setAdministrador(false);			
 			usuarioRepository.saveAndFlush(usuario);
 		}
 		
