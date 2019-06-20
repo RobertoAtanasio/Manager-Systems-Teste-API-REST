@@ -14,7 +14,6 @@ import com.managersystem.sisclinica.api.exception.TokenInexistenteException;
 import com.managersystem.sisclinica.api.exception.TokenNaoAdministradorException;
 import com.managersystem.sisclinica.api.model.Pais;
 import com.managersystem.sisclinica.api.model.Token;
-import com.managersystem.sisclinica.api.repository.filtro.PaisFiltroExcluir;
 import com.managersystem.sisclinica.api.repository.pais.PaisRepository;
 import com.managersystem.sisclinica.api.repository.token.TokenRepository;
 
