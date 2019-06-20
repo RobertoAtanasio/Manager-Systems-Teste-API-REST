@@ -1,19 +1,16 @@
 package com.managersystem.sisclinica.api.resource;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.managersystem.sisclinica.api.exception.UsuarioInexistenteException;
 import com.managersystem.sisclinica.api.model.UsuarioAutenticado;
-import com.managersystem.sisclinica.api.model.UsuarioPesquisa;
-import com.managersystem.sisclinica.api.repository.filtro.TokenFiltro;
 import com.managersystem.sisclinica.api.service.UsuarioService;
 
 @RestController
@@ -24,10 +21,10 @@ public class UsuarioResource {
 	private UsuarioService usuarioService;
 	
 	@PostMapping("/autenticar")
-	public ResponseEntity<UsuarioAutenticado> autenticar(UsuarioPesquisa usuario) {
+	public ResponseEntity<UsuarioAutenticado> autenticar(@RequestParam String login, @RequestParam String senha) {
 		UsuarioAutenticado usuarioAutenticado = null;
 		try {
-			usuarioAutenticado = usuarioService.autenticar(usuario);			
+			usuarioAutenticado = usuarioService.autenticar(login, senha);			
 		} catch (UsuarioInexistenteException e) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
@@ -35,8 +32,8 @@ public class UsuarioResource {
 	}
 	
 	@GetMapping("/renovar-ticket")
-	public ResponseEntity<Object> renovarTicket(TokenFiltro tokenFiltro, HttpServletResponse response) {
-		Boolean status = usuarioService.renovarTicket(tokenFiltro.getToken());
+	public ResponseEntity<Object> renovarTicket(@RequestParam String token) {
+		Boolean status = usuarioService.renovarTicket(token);
 		return ResponseEntity.status(HttpStatus.OK).body(status);
 	}
 	

@@ -15,7 +15,6 @@ import com.managersystem.sisclinica.api.model.Pais;
 import com.managersystem.sisclinica.api.model.Token;
 import com.managersystem.sisclinica.api.model.Usuario;
 import com.managersystem.sisclinica.api.model.UsuarioAutenticado;
-import com.managersystem.sisclinica.api.model.UsuarioPesquisa;
 import com.managersystem.sisclinica.api.repository.pais.PaisRepository;
 import com.managersystem.sisclinica.api.repository.token.TokenRepository;
 import com.managersystem.sisclinica.api.repository.usuario.UsuarioRepository;
@@ -47,18 +46,18 @@ public class UsuarioService {
 		return usuarioRepository.saveAndFlush(usuario);
 	}
 
-	public UsuarioAutenticado autenticar(UsuarioPesquisa usuario) {
+	public UsuarioAutenticado autenticar(String login, String senha) {
 		
 		cargaBanco();
 		UsuarioAutenticado usuarioAutenticado = new UsuarioAutenticado();
-		usuarioAutenticado.setLogin(usuario.getLogin());
+		usuarioAutenticado.setLogin(login);
 
-		Optional<Usuario> usuarioExistente = usuarioRepository.findByLogin(usuario.getLogin());
+		Optional<Usuario> usuarioExistente = usuarioRepository.findByLogin(login);
 		if (!usuarioExistente.isPresent()) {
 			throw new UsuarioInexistenteException();
 		}
 		
-		usuarioExistente = usuarioRepository.findByLoginAndSenha(usuario.getLogin(), usuario.getSenha());
+		usuarioExistente = usuarioRepository.findByLoginAndSenha(login, senha);
 		if (!usuarioExistente.isPresent()) {
 			throw new UsuarioSenhaInvalidaException();
 		}
@@ -66,7 +65,7 @@ public class UsuarioService {
 		LocalDateTime localDateTime = LocalDateTime.now();
 		localDateTime = localDateTime.plusMinutes(5);
 
-		Optional<Token> token = tokenRepository.findByLogin(usuario.getLogin());
+		Optional<Token> token = tokenRepository.findByLogin(login);
 		if (token.isPresent()) {			
 			usuarioAutenticado.setNome(usuarioExistente.get().getNome());
 			usuarioAutenticado.setToken(GerarToken.gerarToken());
@@ -86,7 +85,7 @@ public class UsuarioService {
 			
 			Token tokenNovo = new Token();
 			tokenNovo.setToken(usuarioAutenticado.getToken());
-			tokenNovo.setLogin(usuario.getLogin());
+			tokenNovo.setLogin(login);
 			tokenNovo.setExpiracao(localDateTime);
 			tokenNovo.setAdministrador(usuarioAutenticado.getAdministrador());
 			tokenService.salvar(tokenNovo);		
