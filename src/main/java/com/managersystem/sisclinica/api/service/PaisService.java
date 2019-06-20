@@ -20,7 +20,7 @@ import com.managersystem.sisclinica.api.repository.pais.PaisRepository;
 import com.managersystem.sisclinica.api.repository.token.TokenRepository;
 
 @Service
-public class PaisService implements validarPais {
+public class PaisService  {
 
 	@Autowired
 	private PaisRepository paisRepository;
@@ -28,7 +28,7 @@ public class PaisService implements validarPais {
 	@Autowired
 	private TokenRepository tokenRepository;
 	
-	@Override
+	
 	public Pais salvar(String tokenCodigo, Pais pais) {
 		Token token = validarToken(tokenCodigo);
 		Optional<Pais> paisExistente = paisRepository.findByNome(pais.getNome());
@@ -41,7 +41,7 @@ public class PaisService implements validarPais {
 		return paisRepository.saveAndFlush(pais);
 	}
 	
-	@Override
+	
 	public Pais atualizar(String tokenCodigo, Pais pais) {
 		Token token = validarToken(tokenCodigo);
 		Optional<Pais> paisSalvo = paisRepository.findById(pais.getId());
@@ -54,19 +54,19 @@ public class PaisService implements validarPais {
 		return paisRepository.saveAndFlush(pais);
 	}
 
-	@Override
+	
 	public List<Pais> listar(String tokenCodigo) {
 		validarToken(tokenCodigo);
 		return paisRepository.findAll();
 	}
 
-	@Override
+	
 	public List<Pais> pesquisar(String tokenCodigo, PaisFiltro filtro) {
 		validarToken(tokenCodigo);
 		return paisRepository.findByNomeContaining(filtro.getNome());	
 	}
 
-	@Override
+	
 	public Pais excluir(PaisFiltroExcluir filtroExcluir) {
 		Token token = validarToken(filtroExcluir.getToken());
 		

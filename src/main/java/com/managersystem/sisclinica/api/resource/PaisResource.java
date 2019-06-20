@@ -24,14 +24,14 @@ import com.managersystem.sisclinica.api.model.Pais;
 import com.managersystem.sisclinica.api.repository.filtro.PaisFiltro;
 import com.managersystem.sisclinica.api.repository.filtro.PaisFiltroExcluir;
 import com.managersystem.sisclinica.api.repository.filtro.TokenFiltro;
-import com.managersystem.sisclinica.api.service.validarPais;
+import com.managersystem.sisclinica.api.service.PaisService;
 
 @RestController
 @RequestMapping("/pais")
 public class PaisResource {
 	
 	@Autowired
-	private validarPais paisService;
+	private PaisService paisService;
 	
 	@GetMapping("/pesquisar")
 	public ResponseEntity<List<Pais>> pesquisar(PaisFiltro paisFiltro) {
