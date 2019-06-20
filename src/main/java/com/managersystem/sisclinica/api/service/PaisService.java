@@ -14,7 +14,6 @@ import com.managersystem.sisclinica.api.exception.TokenInexistenteException;
 import com.managersystem.sisclinica.api.exception.TokenNaoAdministradorException;
 import com.managersystem.sisclinica.api.model.Pais;
 import com.managersystem.sisclinica.api.model.Token;
-import com.managersystem.sisclinica.api.repository.filtro.PaisFiltro;
 import com.managersystem.sisclinica.api.repository.filtro.PaisFiltroExcluir;
 import com.managersystem.sisclinica.api.repository.pais.PaisRepository;
 import com.managersystem.sisclinica.api.repository.token.TokenRepository;
@@ -61,23 +60,23 @@ public class PaisService  {
 	}
 
 	
-	public List<Pais> pesquisar(String tokenCodigo, PaisFiltro filtro) {
+	public List<Pais> pesquisar(String tokenCodigo, String nome) {
 		validarToken(tokenCodigo);
-		return paisRepository.findByNomeContaining(filtro.getNome());	
+		return paisRepository.findByNomeContaining(nome);	
 	}
 
 	
-	public Pais excluir(PaisFiltroExcluir filtroExcluir) {
-		Token token = validarToken(filtroExcluir.getToken());
+	public Pais excluir(String tokenCodigo, Long id) {
+		Token token = validarToken(tokenCodigo);
 		
-		Optional<Pais> pais = paisRepository.findById(filtroExcluir.getId());
+		Optional<Pais> pais = paisRepository.findById(id);
 		if (!pais.isPresent()) {
 			throw new PaisInexistenteException();
 		}
 		if (!token.getAdministrador()) {
 			throw new TokenNaoAdministradorException();
 		}
-		paisRepository.deleteById(filtroExcluir.getId());
+		paisRepository.deleteById(id);
 		return null;
 	}
 	
