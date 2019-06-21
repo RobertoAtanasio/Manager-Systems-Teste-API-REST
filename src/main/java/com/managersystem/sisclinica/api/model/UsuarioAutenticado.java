@@ -1,8 +1,5 @@
 package com.managersystem.sisclinica.api.model;
 
-import org.springframework.stereotype.Service;
-
-@Service
 public class UsuarioAutenticado {
 
 	private String login;
