@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.managersystem.sisclinica.api.exception.UsuarioInexistenteException;
 import com.managersystem.sisclinica.api.model.UsuarioAutenticado;
 import com.managersystem.sisclinica.api.service.UsuarioService;
 
@@ -22,12 +21,7 @@ public class UsuarioResource {
 	
 	@PostMapping("/autenticar")
 	public ResponseEntity<UsuarioAutenticado> autenticar(@RequestParam String login, @RequestParam String senha) {
-		UsuarioAutenticado usuarioAutenticado = null;
-		try {
-			usuarioAutenticado = usuarioService.autenticar(login, senha);			
-		} catch (UsuarioInexistenteException e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-		}
+		UsuarioAutenticado usuarioAutenticado = usuarioService.autenticar(login, senha);			
 		return ResponseEntity.status(HttpStatus.OK).body(usuarioAutenticado);
 	}
 	
